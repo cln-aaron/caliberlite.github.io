@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caliber Lite — CEH Pre-Course Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--navy:#04080F;--navy2:#080D18;--edge:#1A2D50;--muted:#4A6080;
+--ice:#C8D8F0;--ice2:#8FA8CC;--white:#F0F6FF;
+--accent:#2AFFD2;--accent2:#00B8F5;
+--red:#FF6B6B;--yellow:#FFD93D;--green:#2AFFD2;--blue:#00B8F5;
+}
+html{scroll-behavior:smooth}
+body{
+background:var(--navy);color:var(--ice);
+font-family:'DM Mono',monospace;font-size:13px;
+display:flex;justify-content:center;align-items:flex-start;
+min-height:100vh;padding:2rem 1rem;line-height:1.7;
+}
+body::before{
+content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+background-image:
+linear-gradient(rgba(42,255,210,0.025) 1px,transparent 1px),
+linear-gradient(90deg,rgba(42,255,210,0.025) 1px,transparent 1px);
+background-size:60px 60px;
+}
+body::after{
+content:'';position:fixed;left:0;width:100%;height:2px;z-index:9999;pointer-events:none;
+background:linear-gradient(90deg,transparent,rgba(42,255,210,0.35),transparent);
+animation:scan 6s linear infinite;
+}
+@keyframes scan{0%{top:0;opacity:0}5%{opacity:1}95%{opacity:1}100%{top:100%;opacity:0}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.container{max-width:700px;width:100%;position:relative;z-index:1}
+.hidden{display:none!important}
+
+/* Language Toggle */
+.lang-toggle{
+position:fixed;top:1rem;right:1rem;z-index:10000;
+display:flex;gap:2px;background:var(--navy2);border:1px solid var(--edge);
+border-radius:2px;overflow:hidden;
+}
+.lang-btn{
+padding:8px 14px;background:transparent;border:none;
+color:var(--ice2);font-family:'DM Mono',monospace;font-size:11px;
+letter-spacing:0.1em;cursor:pointer;transition:all 0.2s;text-transform:uppercase;
+}
+.lang-btn.active{background:var(--accent);color:var(--navy)}
+
+/* Logo */
+.logo-icon{
+width:60px;height:60px;margin:0 auto 1.5rem;display:block;
+}
+h1{
+font-family:'Syne',sans-serif;font-weight:800;font-size:2.6rem;
+color:var(--accent);text-align:center;letter-spacing:-0.02em;margin-bottom:0.3rem;
+}
+.subtitle{
+font-size:12px;text-transform:uppercase;letter-spacing:0.18em;
+color:var(--ice2);text-align:center;margin-bottom:2.5rem;
+}
+
+/* Cards */
+.card{
+background:var(--navy2);border:1px solid var(--edge);
+padding:2rem;position:relative;margin-bottom:1.5rem;
+animation:fadeIn 0.4s ease;
+}
+.card::before{
+content:'';position:absolute;top:-1px;left:-1px;
+width:24px;height:24px;
+border-top:2px solid var(--accent);border-left:2px solid var(--accent);
+}
+.card::after{
+content:'';position:absolute;bottom:-1px;right:-1px;
+width:24px;height:24px;
+border-bottom:2px solid var(--accent);border-right:2px solid var(--accent);
+}
+.card h2{
+font-family:'Syne',sans-serif;font-weight:700;font-size:1.4rem;
+color:var(--white);text-align:center;margin-bottom:0.5rem;
+}
+.card p{color:var(--ice2);text-align:center;margin-bottom:1.5rem;font-size:12px}
+
+/* Input */
+.input-field{
+width:100%;padding:14px 18px;background:rgba(42,255,210,0.03);
+border:1px solid var(--edge);color:var(--white);
+font-family:'DM Mono',monospace;font-size:13px;
+text-align:center;letter-spacing:0.1em;text-transform:uppercase;
+transition:border-color 0.2s;outline:none;
+}
+.input-field::placeholder{color:var(--muted);text-transform:uppercase}
+.input-field:focus{border-color:rgba(42,255,210,0.4)}
+.error-msg{color:var(--red);font-size:11px;text-align:center;margin-top:0.8rem;min-height:1.2em}
+
+/* Buttons */
+.btn{
+display:block;margin:1.5rem auto 0;padding:14px 40px;
+background:var(--accent);color:var(--navy);border:none;
+font-family:'DM Mono',monospace;font-size:13px;font-weight:500;
+letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;
+clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);
+transition:opacity 0.2s,transform 0.2s;
+}
+.btn:hover{opacity:0.85;transform:translateY(-2px)}
+.btn:disabled{opacity:0.25;cursor:not-allowed;transform:none}
+.btn-outline{
+background:transparent;border:1px solid var(--edge);color:var(--ice2);
+clip-path:none;padding:12px 30px;
+}
+.btn-outline:hover{border-color:rgba(42,255,210,0.4);color:var(--white)}
+
+/* Section Labels */
+.section-label{
+font-size:11px;text-transform:uppercase;letter-spacing:0.16em;
+color:var(--accent);margin-bottom:1rem;display:flex;align-items:center;gap:10px;
+}
+.section-label::before{content:'';width:20px;height:1px;background:var(--accent)}
+
+/* Progress */
+.progress-wrap{margin-bottom:1.5rem}
+.progress-info{display:flex;justify-content:space-between;margin-bottom:6px;font-size:11px;color:var(--ice2);text-transform:uppercase;letter-spacing:0.1em}
+.progress-bar{height:3px;background:var(--edge);width:100%}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 0.4s ease;width:0%}
+
+/* Quiz Options */
+.options{display:flex;flex-direction:column;gap:8px;margin:1.5rem 0}
+.option-btn{
+background:rgba(42,255,210,0.03);border:1px solid var(--edge);
+padding:14px 18px;color:var(--ice);text-align:left;
+font-family:'DM Mono',monospace;font-size:12px;
+cursor:pointer;transition:all 0.2s;display:flex;gap:12px;
+}
+.option-btn:hover{background:rgba(42,255,210,0.08);border-color:rgba(42,255,210,0.4);color:var(--white)}
+.option-btn.selected{background:rgba(42,255,210,0.12);border-color:var(--accent);color:var(--white)}
+.option-btn .opt-letter{color:var(--accent);font-weight:500;min-width:18px}
+
+/* Nav buttons */
+.nav-row{display:flex;justify-content:space-between;gap:12px;margin-top:1.5rem}
+.nav-btn{
+flex:1;padding:12px;border:none;font-family:'DM Mono',monospace;
+font-size:12px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;
+transition:all 0.2s;
+}
+.nav-prev{background:transparent;border:1px solid var(--edge);color:var(--ice2)}
+.nav-prev:hover{border-color:rgba(42,255,210,0.4);color:var(--white)}
+.nav-next{
+background:var(--accent);color:var(--navy);font-weight:500;
+clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+}
+.nav-next:hover{opacity:0.85}
+.nav-btn:disabled{opacity:0.25;cursor:not-allowed}
+
+/* Question counter */
+.q-domain{font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:0.8rem}
+.q-text{color:var(--white);font-size:14px;line-height:1.7;margin-bottom:0.3rem}
+
+/* Results */
+.result-score{
+text-align:center;padding:2rem 0;
+}
+.result-score .big-num{
+font-family:'Syne',sans-serif;font-size:4rem;font-weight:800;
+color:var(--accent);line-height:1;
+}
+.result-score .big-denom{font-size:1.5rem;color:var(--ice2)}
+.result-score .pct{font-size:1.2rem;color:var(--ice2);margin-top:0.3rem}
+
+.readiness-badge{
+display:inline-block;padding:8px 24px;
+font-size:12px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;
+border:1px solid var(--accent);color:var(--accent);margin:1rem auto;
+text-align:center;
+}
+
+.chart-wrap{max-width:450px;margin:2rem auto;position:relative}
+
+/* Domain rows */
+.domain-row{
+display:flex;justify-content:space-between;align-items:center;
+padding:10px 0;border-bottom:1px solid rgba(26,45,80,0.5);
+font-size:12px;
+}
+.domain-row .d-name{color:var(--ice);flex:1}
+.domain-row .d-score{color:var(--accent);font-weight:500;min-width:60px;text-align:right}
+.domain-row.weak .d-name{color:var(--red)}
+.domain-row.weak .d-score{color:var(--red)}
+.domain-row.strong .d-name{color:var(--accent)}
+
+/* Scoring table */
+.score-table{width:100%;border-collapse:collapse;font-size:11px;margin:1rem 0}
+.score-table th{
+text-align:left;padding:8px 6px;border-bottom:1px solid var(--edge);
+color:var(--accent);text-transform:uppercase;letter-spacing:0.1em;font-weight:500;
+}
+.score-table td{padding:8px 6px;border-bottom:1px solid rgba(26,45,80,0.3);color:var(--ice)}
+.score-table tr:hover td{background:rgba(42,255,210,0.03)}
+
+/* Strengths/Weaknesses boxes */
+.sw-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:1rem 0}
+.sw-box{padding:1rem;border:1px solid var(--edge);background:rgba(42,255,210,0.02)}
+.sw-box h3{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:0.8rem;display:flex;align-items:center;gap:6px}
+.sw-box.strengths h3{color:var(--accent)}
+.sw-box.weaknesses h3{color:var(--red)}
+.sw-box ul{list-style:none;font-size:11px;line-height:2}
+.sw-box.strengths li::before{content:'+ ';color:var(--accent)}
+.sw-box.weaknesses li::before{content:'- ';color:var(--red)}
+
+/* Instructions list */
+.instr-list{margin:1rem 0;padding-left:0;list-style:none}
+.instr-list li{
+padding:8px 0;border-bottom:1px solid rgba(26,45,80,0.3);
+font-size:12px;color:var(--ice);display:flex;gap:10px;
+}
+.instr-list li .bullet{color:var(--accent);font-weight:500}
+
+/* Footer */
+.footer{
+text-align:center;padding:2rem 0;margin-top:2rem;
+border-top:1px solid var(--edge);
+}
+.footer .credit{font-family:'Syne',sans-serif;font-weight:600;font-size:14px;color:var(--white);margin-bottom:0.3rem}
+.footer a{color:var(--accent);text-decoration:none;font-size:12px}
+.footer .copy{font-size:10px;color:var(--muted);margin-top:0.5rem;letter-spacing:0.08em}
+
+/* Responsive */
+@media(max-width:500px){
+h1{font-size:2rem}
+.card{padding:1.3rem}
+.sw-grid{grid-template-columns:1fr}
+.chart-wrap{max-width:300px}
+.subtitle{font-size:10px}
+}
+</style>
+</head>
+<body>
+
+<!-- Language Toggle -->
+<div class="lang-toggle">
+<button class="lang-btn active" onclick="setLang('en')" id="btn-en">EN</button>
+<button class="lang-btn" onclick="setLang('ko')" id="btn-ko">KO</button>
+</div>
+
+<div class="container">
+
+<!-- ===== ACCESS SCREEN ===== -->
+<div id="screen-access">
+<svg class="logo-icon" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<polygon points="30,4 54,17 54,43 30,56 6,43 6,17" stroke="#2AFFD2" stroke-width="1.5" fill="none"/>
+<polygon points="30,12 46,21 46,39 30,48 14,39 14,21" stroke="#2AFFD2" stroke-width="1" fill="none" opacity="0.5"/>
+<circle cx="30" cy="30" r="6" stroke="#2AFFD2" stroke-width="1.5" fill="none"/>
+<circle cx="30" cy="30" r="2" fill="#2AFFD2"/>
+</svg>
+<h1>Caliber Lite</h1>
+<div class="subtitle" data-en="CEH PRE-COURSE ASSESSMENT ENGINE" data-ko="CEH 사전 평가 엔진">CEH PRE-COURSE ASSESSMENT ENGINE</div>
+
+<div class="card">
+<h2 data-en="Enter Access Code" data-ko="접속 코드 입력">Enter Access Code</h2>
+<p data-en="A valid access code is required to proceed." data-ko="계속하려면 유효한 접속 코드가 필요합니다.">A valid access code is required to proceed.</p>
+<input type="text" class="input-field" id="access-input" data-en-placeholder="ENTER CODE HERE" data-ko-placeholder="코드를 입력하세요" placeholder="ENTER CODE HERE">
+<div class="error-msg" id="access-error"></div>
+<button class="btn" onclick="checkAccess()" data-en="ENTER" data-ko="입장">ENTER</button>
+</div>
+</div>
+
+<!-- ===== INSTRUCTIONS SCREEN ===== -->
+<div id="screen-instructions" class="hidden">
+<h1>Caliber Lite</h1>
+<div class="subtitle" data-en="CEH PRE-COURSE ASSESSMENT ENGINE" data-ko="CEH 사전 평가 엔진">CEH PRE-COURSE ASSESSMENT ENGINE</div>
+
+<div class="card">
+<div class="section-label" data-en="Assessment Overview" data-ko="평가 개요">Assessment Overview</div>
+<h2 data-en="Certified Ethical Hacker (CEH)" data-ko="공인 윤리적 해커 (CEH)">Certified Ethical Hacker (CEH)</h2>
+<p data-en="Prior Knowledge Evaluation — 54 Questions across all CEH Domains" data-ko="사전 지식 평가 — CEH 전 도메인 54문항">Prior Knowledge Evaluation — 54 Questions across all CEH Domains</p>
+
+<div class="section-label" data-en="Instructions" data-ko="안내 사항">Instructions</div>
+<ul class="instr-list">
+<li><span class="bullet">01</span><span data-en="Select the single best answer for each question." data-ko="각 문항에서 가장 적합한 답을 하나 선택하세요.">Select the single best answer for each question.</span></li>
+<li><span class="bullet">02</span><span data-en="This assessment covers all 20 CEH domains." data-ko="이 평가는 CEH의 20개 도메인을 모두 다룹니다.">This assessment covers all 20 CEH domains.</span></li>
+<li><span class="bullet">03</span><span data-en="Use the scoring guide at the end to assess your readiness level." data-ko="평가 후 채점 가이드를 통해 준비 수준을 확인하세요.">Use the scoring guide at the end to assess your readiness level.</span></li>
+<li><span class="bullet">04</span><span data-en="This assessment does not require prior CEH course knowledge — it measures your baseline." data-ko="이 평가는 CEH 수강 경험이 없어도 됩니다 — 현재 기본 역량을 측정합니다.">This assessment does not require prior CEH course knowledge — it measures your baseline.</span></li>
+<li><span class="bullet">05</span><span data-en="You can toggle between English and Korean at any time." data-ko="언제든지 영어와 한국어를 전환할 수 있습니다.">You can toggle between English and Korean at any time.</span></li>
+<li><span class="bullet">06</span><span data-en="At the end, you will receive a detailed breakdown of your strengths and weaknesses by domain." data-ko="평가 완료 후 도메인별 강점과 약점을 상세하게 확인할 수 있습니다.">At the end, you will receive a detailed breakdown of your strengths and weaknesses by domain.</span></li>
+</ul>
+
+<div class="section-label" data-en="Readiness Levels" data-ko="준비 수준">Readiness Levels</div>
+<table class="score-table">
+<thead><tr>
+<th data-en="Score" data-ko="점수">Score</th>
+<th>%</th>
+<th data-en="Level" data-ko="수준">Level</th>
+</tr></thead>
+<tbody>
+<tr><td>45–54</td><td>83–100%</td><td data-en="Advanced" data-ko="심화 수준">Advanced</td></tr>
+<tr><td>38–44</td><td>70–81%</td><td data-en="Proficient" data-ko="숙련 수준">Proficient</td></tr>
+<tr><td>28–37</td><td>52–69%</td><td data-en="Developing" data-ko="발전 중 수준">Developing</td></tr>
+<tr><td>15–27</td><td>28–50%</td><td data-en="Beginner" data-ko="입문 수준">Beginner</td></tr>
+<tr><td>0–14</td><td>0–26%</td><td data-en="Foundational" data-ko="기초 수준">Foundational</td></tr>
+</tbody>
+</table>
+
+<button class="btn" onclick="startQuiz()" data-en="BEGIN ASSESSMENT" data-ko="평가 시작">BEGIN ASSESSMENT</button>
+</div>
+</div>
+
+<!-- ===== QUIZ SCREEN ===== -->
+<div id="screen-quiz" class="hidden">
+<div class="progress-wrap">
+<div class="progress-info">
+<span id="q-counter">Question 1 / 54</span>
+<span id="q-pct">0%</span>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+</div>
+
+<div class="card" id="quiz-card">
+<div class="q-domain" id="q-domain"></div>
+<div class="q-text" id="q-text"></div>
+<div class="options" id="q-options"></div>
+</div>
+
+<div class="nav-row">
+<button class="nav-btn nav-prev" id="btn-prev" onclick="prevQ()" disabled data-en="PREV" data-ko="이전">PREV</button>
+<button class="nav-btn nav-next" id="btn-next" onclick="nextQ()" data-en="NEXT" data-ko="다음">NEXT</button>
+</div>
+</div>
+
+<!-- ===== RESULTS SCREEN ===== -->
+<div id="screen-results" class="hidden">
+<h1>Caliber Lite</h1>
+<div class="subtitle" data-en="ASSESSMENT RESULTS" data-ko="평가 결과">ASSESSMENT RESULTS</div>
+
+<div class="card">
+<div class="section-label" data-en="Your Score" data-ko="당신의 점수">Your Score</div>
+<div class="result-score">
+<div><span class="big-num" id="r-score">0</span><span class="big-denom"> / 54</span></div>
+<div class="pct" id="r-pct">0%</div>
+</div>
+<div style="text-align:center">
+<div class="readiness-badge" id="r-level">—</div>
+</div>
+<p id="r-action" style="margin-top:1rem"></p>
+</div>
+
+<div class="card">
+<div class="section-label" data-en="Domain Performance" data-ko="도메인별 성과">Domain Performance</div>
+<div class="chart-wrap"><canvas id="radar-chart"></canvas></div>
+</div>
+
+<div class="card">
+<div class="section-label" data-en="Strengths & Weaknesses" data-ko="강점 및 약점">Strengths & Weaknesses</div>
+<div class="sw-grid">
+<div class="sw-box strengths">
+<h3 data-en="Strengths" data-ko="강점">Strengths</h3>
+<ul id="r-strengths"></ul>
+</div>
+<div class="sw-box weaknesses">
+<h3 data-en="Weaknesses" data-ko="약점">Weaknesses</h3>
+<ul id="r-weaknesses"></ul>
+</div>
+</div>
+</div>
+
+<div class="card">
+<div class="section-label" data-en="Domain Breakdown" data-ko="도메인 상세">Domain Breakdown</div>
+<div id="r-domains"></div>
+</div>
+
+<div class="card">
+<div class="section-label" data-en="Scoring Guide" data-ko="채점 가이드">Scoring Guide</div>
+<table class="score-table">
+<thead><tr>
+<th data-en="Score" data-ko="점수">Score</th>
+<th>%</th>
+<th data-en="Level" data-ko="수준">Level</th>
+<th data-en="Recommended Action" data-ko="권장 행동">Recommended Action</th>
+</tr></thead>
+<tbody>
+<tr><td>45–54</td><td>83–100%</td><td data-en="Advanced" data-ko="심화 수준">Advanced</td><td data-en="May skip foundational modules; focus on hands-on labs and advanced topics." data-ko="기초 모듈 건너뛰고 실습 랩과 심화 주제에 집중 가능.">May skip foundational modules; focus on hands-on labs and advanced topics.</td></tr>
+<tr><td>38–44</td><td>70–81%</td><td data-en="Proficient" data-ko="숙련 수준">Proficient</td><td data-en="Light review of weak domains identified; ready for the course." data-ko="취약 도메인 가벼운 복습 후 바로 수강 가능.">Light review of weak domains identified; ready for the course.</td></tr>
+<tr><td>28–37</td><td>52–69%</td><td data-en="Developing" data-ko="발전 중 수준">Developing</td><td data-en="Review core networking, OS, and security fundamentals before starting." data-ko="핵심 네트워킹·OS·보안 기초 복습 후 수강 권장.">Review core networking, OS, and security fundamentals before starting.</td></tr>
+<tr><td>15–27</td><td>28–50%</td><td data-en="Beginner" data-ko="입문 수준">Beginner</td><td data-en="Complete prerequisite reading (CompTIA Security+/Network+ level) first." data-ko="CompTIA Security+/Network+ 수준의 선행 학습 완료 후 수강.">Complete prerequisite reading (CompTIA Security+/Network+ level) first.</td></tr>
+<tr><td>0–14</td><td>0–26%</td><td data-en="Foundational" data-ko="기초 수준">Foundational</td><td data-en="Strongly recommended to take introductory IT/security courses before CEH." data-ko="CEH 수강 전 IT/보안 입문 과정을 먼저 수강할 것을 강력 권장.">Strongly recommended to take introductory IT/security courses before CEH.</td></tr>
+</tbody>
+</table>
+</div>
+
+<button class="btn" onclick="resetQuiz()" data-en="RETAKE ASSESSMENT" data-ko="재평가">RETAKE ASSESSMENT</button>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+<div class="credit">Built, Designed and Conceptualised by Aaron Ang</div>
+<a href="https://linkedin.com/in/aaronangsg" target="_blank">linkedin.com/in/aaronangsg</a>
+<div class="copy">&copy; 2026 Hesed &amp; Emet Advisory Pte Ltd</div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+// ===== LANGUAGE =====
+let lang = 'en';
+function setLang(l) {
+  lang = l;
+  document.getElementById('btn-en').classList.toggle('active', l==='en');
+  document.getElementById('btn-ko').classList.toggle('active', l==='ko');
+  document.querySelectorAll('[data-en]').forEach(el => {
+    el.textContent = el.getAttribute('data-'+l);
+  });
+  document.querySelectorAll('[data-en-placeholder]').forEach(el => {
+    el.placeholder = el.getAttribute('data-'+l+'-placeholder');
+  });
+  if (!document.getElementById('screen-quiz').classList.contains('hidden')) renderQuestion();
+  if (!document.getElementById('screen-results').classList.contains('hidden')) showResults();
+}
+
+// ===== ACCESS =====
+function checkAccess() {
+  const input = document.getElementById('access-input').value.trim().toUpperCase();
+  const err = document.getElementById('access-error');
+  const codes = ['INTEGRITYMATTERS','CALIBERLITE2026'];
+  const now = Date.now();
+  const timedCode = 'CEHREADY2026';
+  const timedStart = new Date('2026-04-01T00:00:00+08:00').getTime();
+  const timedEnd = new Date('2026-12-31T23:59:59+08:00').getTime();
+  if (codes.includes(input) || (input === timedCode && now >= timedStart && now <= timedEnd)) {
+    document.getElementById('screen-access').classList.add('hidden');
+    document.getElementById('screen-instructions').classList.remove('hidden');
+    window.scrollTo({top:0,behavior:'smooth'});
+  } else {
+    err.textContent = lang==='en' ? 'Invalid access code. Please try again.' : '유효하지 않은 접속 코드입니다. 다시 시도해 주세요.';
+  }
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !document.getElementById('screen-access').classList.contains('hidden')) checkAccess();
+});
+
+// ===== DOMAINS =====
+const domains = [
+  {id:0, en:'Introduction to Ethical Hacking', ko:'윤리적 해킹 개론'},
+  {id:1, en:'Footprinting & Reconnaissance', ko:'풋프린팅 및 정찰'},
+  {id:2, en:'Scanning Networks', ko:'네트워크 스캐닝'},
+  {id:3, en:'Enumeration', ko:'열거'},
+  {id:4, en:'Vulnerability Analysis', ko:'취약점 분석'},
+  {id:5, en:'System Hacking', ko:'시스템 해킹'},
+  {id:6, en:'Malware Threats', ko:'악성코드 위협'},
+  {id:7, en:'Sniffing', ko:'스니핑'},
+  {id:8, en:'Social Engineering', ko:'사회공학'},
+  {id:9, en:'Denial-of-Service', ko:'서비스 거부'},
+  {id:10, en:'Session Hijacking', ko:'세션 하이재킹'},
+  {id:11, en:'Evading IDS, Firewalls & Honeypots', ko:'IDS·방화벽·허니팟 우회'},
+  {id:12, en:'Hacking Web Servers', ko:'웹 서버 해킹'},
+  {id:13, en:'Hacking Web Applications', ko:'웹 애플리케이션 해킹'},
+  {id:14, en:'SQL Injection', ko:'SQL 인젝션'},
+  {id:15, en:'Hacking Wireless Networks', ko:'무선 네트워크 해킹'},
+  {id:16, en:'Hacking Mobile Platforms', ko:'모바일 플랫폼 해킹'},
+  {id:17, en:'IoT & OT Hacking', ko:'IoT 및 OT 해킹'},
+  {id:18, en:'Cloud Computing', ko:'클라우드 컴퓨팅'},
+  {id:19, en:'Cryptography', ko:'암호학'}
+];
+
+// ===== QUESTIONS =====
+const questions = [
+{d:0,en:{q:"Which of the following BEST describes the primary purpose of ethical hacking?",a:["To exploit vulnerabilities for financial gain","To identify and assess security weaknesses with authorization","To develop malware for testing purposes","To intercept network traffic without permission"]},ko:{q:"다음 중 모의 해킹(에티컬 해킹)의 주된 목적을 가장 잘 설명한 것은?",a:["금전적 이득을 위해 취약점을 악용한다","허가를 받고 보안 취약점을 식별하고 평가한다","테스트 목적으로 악성코드를 개발한다","허가 없이 네트워크 트래픽을 가로챈다"]},ans:1},
+{d:0,en:{q:"What distinguishes a 'white hat' hacker from a 'black hat' hacker?",a:["The tools they use","Their level of technical skill","Authorization and intent","The operating system they prefer"]},ko:{q:"'화이트햇' 해커와 '블랙햇' 해커를 구분하는 핵심 요소는 무엇인가?",a:["사용하는 도구의 종류","기술적 숙련도 수준","허가 여부와 의도","선호하는 운영체제"]},ans:2},
+{d:1,en:{q:"Which technique involves gathering information about a target without directly interacting with the target's systems?",a:["Active reconnaissance","Passive reconnaissance","Network scanning","Vulnerability scanning"]},ko:{q:"대상 시스템과 직접 상호작용하지 않고 정보를 수집하는 기법은?",a:["능동적 정찰","수동적 정찰","네트워크 스캐닝","취약점 스캐닝"]},ans:1},
+{d:1,en:{q:"A security analyst uses 'Google dorking' during a reconnaissance phase. What is the primary goal?",a:["To inject SQL into Google's database","To find sensitive information indexed by search engines","To launch a DDoS attack using Google's servers","To bypass Google's CAPTCHA system"]},ko:{q:"보안 분석가가 정찰 단계에서 '구글 도킹'을 사용하는 주된 목적은?",a:["구글 데이터베이스에 SQL을 주입하기 위해","검색 엔진에 인덱싱된 민감한 정보를 찾기 위해","구글 서버를 이용해 DDoS 공격을 시작하기 위해","구글 CAPTCHA 시스템을 우회하기 위해"]},ans:1},
+{d:2,en:{q:"Which Nmap scan type sends SYN packets but never completes the TCP three-way handshake, making it less likely to be logged?",a:["TCP Connect Scan (-sT)","SYN Stealth Scan (-sS)","UDP Scan (-sU)","FIN Scan (-sF)"]},ko:{q:"SYN 패킷을 보내지만 TCP 3-way 핸드셰이크를 완료하지 않아 로그에 남을 가능성이 낮은 Nmap 스캔 유형은?",a:["TCP 연결 스캔 (-sT)","SYN 스텔스 스캔 (-sS)","UDP 스캔 (-sU)","FIN 스캔 (-sF)"]},ans:1},
+{d:2,en:{q:"What does a port respond with when it is 'closed' according to TCP standards?",a:["SYN-ACK","No response","RST-ACK","FIN-ACK"]},ko:{q:"TCP 표준에 따라 포트가 '닫힌' 상태일 때 어떻게 응답하는가?",a:["SYN-ACK","응답 없음","RST-ACK","FIN-ACK"]},ans:2},
+{d:3,en:{q:"Which protocol is commonly exploited during enumeration to extract usernames, shares, and group information from Windows systems?",a:["FTP","SMTP","SMB/NetBIOS","SNMP"]},ko:{q:"Windows 시스템에서 사용자 이름, 공유 폴더, 그룹 정보를 추출하기 위한 열거 단계에서 일반적으로 악용되는 프로토콜은?",a:["FTP","SMTP","SMB/NetBIOS","SNMP"]},ans:2},
+{d:3,en:{q:"LDAP enumeration primarily targets which type of infrastructure?",a:["Web servers","Directory services such as Active Directory","Firewall configurations","Database management systems"]},ko:{q:"LDAP 열거는 주로 어떤 유형의 인프라를 대상으로 하는가?",a:["웹 서버","Active Directory 같은 디렉터리 서비스","방화벽 설정","데이터베이스 관리 시스템"]},ans:1},
+{d:4,en:{q:"Which of the following scoring systems is used to rate the severity of software vulnerabilities?",a:["CVSS (Common Vulnerability Scoring System)","CIA Triad","OWASP Top 10","PCI-DSS"]},ko:{q:"소프트웨어 취약점의 심각도를 평가하는 데 사용되는 채점 시스템은?",a:["CVSS (공통 취약점 심각도 채점 시스템)","CIA 트라이어드","OWASP Top 10","PCI-DSS"]},ans:0},
+{d:4,en:{q:"A vulnerability scanner reports a 'false positive'. What does this mean?",a:["A real vulnerability was missed","A vulnerability was flagged that does not actually exist","The scan was interrupted before completion","The vulnerability has already been patched"]},ko:{q:"취약점 스캐너가 '거짓 양성(false positive)'을 보고한다는 것은 무엇을 의미하는가?",a:["실제 취약점을 놓쳤다","실제로 존재하지 않는 취약점을 탐지했다","스캔이 완료 전에 중단됐다","취약점이 이미 패치됐다"]},ans:1},
+{d:5,en:{q:"Which phase of system hacking involves an attacker maintaining access after the initial compromise?",a:["Gaining access","Escalating privileges","Maintaining access","Clearing logs"]},ko:{q:"시스템 해킹의 어느 단계에서 공격자는 초기 침해 이후에도 지속적으로 접근을 유지하는가?",a:["접근 확보","권한 상승","접근 유지","로그 삭제"]},ans:2},
+{d:5,en:{q:"What is the purpose of a 'rainbow table' in password cracking?",a:["To generate random passwords","To store precomputed hash-to-plaintext mappings","To encrypt passwords using AES","To detect brute-force attacks"]},ko:{q:"패스워드 크래킹에서 '레인보우 테이블'의 목적은?",a:["임의 패스워드를 생성한다","사전 계산된 해시-평문 매핑을 저장한다","AES를 이용해 패스워드를 암호화한다","무차별 대입 공격을 탐지한다"]},ans:1},
+{d:6,en:{q:"Which type of malware disguises itself as a legitimate application but performs malicious actions in the background?",a:["Worm","Ransomware","Trojan Horse","Adware"]},ko:{q:"합법적인 애플리케이션으로 위장하면서 백그라운드에서 악성 행위를 수행하는 악성코드 유형은?",a:["웜","랜섬웨어","트로이 목마","애드웨어"]},ans:2},
+{d:6,en:{q:"What characteristic makes a computer worm different from a traditional virus?",a:["Worms require user interaction to spread","Worms can self-replicate and spread across networks without a host file","Worms only affect mobile devices","Worms encrypt files for ransom"]},ko:{q:"컴퓨터 웜이 전통적인 바이러스와 다른 특징은?",a:["웜은 확산하려면 사용자 조작이 필요하다","웜은 호스트 파일 없이 네트워크 전체에 스스로 복제·확산할 수 있다","웜은 모바일 기기에만 영향을 준다","웜은 몸값을 위해 파일을 암호화한다"]},ans:1},
+{d:7,en:{q:"Which type of attack allows an attacker on a switched network to capture traffic not destined for their machine by flooding the CAM table?",a:["ARP Poisoning","MAC Flooding","DNS Spoofing","IP Spoofing"]},ko:{q:"스위치 네트워크에서 공격자가 CAM 테이블을 넘쳐나게 해 자신의 장치로 향하지 않는 트래픽을 캡처할 수 있는 공격 유형은?",a:["ARP 포이즈닝","MAC 플러딩","DNS 스푸핑","IP 스푸핑"]},ans:1},
+{d:7,en:{q:"Which protocol is most commonly targeted in ARP poisoning attacks?",a:["TCP","ARP (Address Resolution Protocol)","ICMP","DNS"]},ko:{q:"ARP 포이즈닝 공격에서 가장 일반적으로 표적이 되는 프로토콜은?",a:["TCP","ARP(주소 결정 프로토콜)","ICMP","DNS"]},ans:1},
+{d:8,en:{q:"An attacker calls an employee, claims to be from IT support, and requests login credentials to 'fix' an issue. This is an example of:",a:["Phishing","Vishing (Voice Phishing)","Baiting","Tailgating"]},ko:{q:"공격자가 직원에게 전화해 IT 지원팀이라고 주장하며 문제를 '수리'하기 위해 로그인 자격 증명을 요청한다. 이것은 무슨 공격인가?",a:["피싱","비싱(음성 피싱)","베이팅","테일게이팅"]},ans:1},
+{d:8,en:{q:"Which social engineering technique involves leaving infected USB drives in public places to entice employees to plug them in?",a:["Phishing","Pretexting","Baiting","Quid pro quo"]},ko:{q:"직원들이 꽂아보도록 유도하기 위해 공공장소에 감염된 USB 드라이브를 놔두는 사회공학 기법은?",a:["피싱","프리텍스팅","베이팅","대가 제공"]},ans:2},
+{d:9,en:{q:"In a SYN flood attack, what resource on the target server is exhausted?",a:["Disk space","CPU registers","The TCP connection state table (backlog queue)","DNS cache"]},ko:{q:"SYN 플러드 공격에서 대상 서버의 어떤 자원이 고갈되는가?",a:["디스크 공간","CPU 레지스터","TCP 연결 상태 테이블(백로그 큐)","DNS 캐시"]},ans:2},
+{d:9,en:{q:"What is the key difference between a DoS attack and a DDoS attack?",a:["DoS uses encryption; DDoS does not","DDoS originates from multiple sources simultaneously","DoS targets only web servers; DDoS targets any device","DDoS is always more damaging than DoS"]},ko:{q:"DoS 공격과 DDoS 공격의 핵심 차이점은?",a:["DoS는 암호화를 사용하고 DDoS는 그렇지 않다","DDoS는 동시에 여러 출처에서 시작된다","DoS는 웹 서버만, DDoS는 모든 장치를 대상으로 한다","DDoS는 항상 DoS보다 피해가 크다"]},ans:1},
+{d:10,en:{q:"Which attack involves an attacker stealing a valid session token to impersonate a legitimate user?",a:["SQL Injection","Cross-Site Scripting (XSS)","Session Hijacking","Buffer Overflow"]},ko:{q:"공격자가 유효한 세션 토큰을 훔쳐 정상 사용자를 사칭하는 공격은?",a:["SQL 인젝션","크로스사이트 스크립팅(XSS)","세션 하이재킹","버퍼 오버플로우"]},ans:2},
+{d:10,en:{q:"Which mitigation BEST prevents session fixation attacks?",a:["Using HTTP instead of HTTPS","Regenerating session IDs after successful authentication","Storing session tokens in URL parameters","Disabling cookies in the browser"]},ko:{q:"세션 고정 공격을 방지하는 데 가장 효과적인 대책은?",a:["HTTPS 대신 HTTP 사용","인증 성공 후 세션 ID 재생성","URL 파라미터에 세션 토큰 저장","브라우저에서 쿠키 비활성화"]},ans:1},
+{d:11,en:{q:"Which IDS evasion technique involves sending fragmented packets to prevent the IDS from reassembling the payload correctly?",a:["Protocol manipulation","Insertion attack","IP fragmentation","Obfuscation"]},ko:{q:"IDS가 페이로드를 올바르게 재조합하지 못하도록 단편화된 패킷을 전송하는 IDS 회피 기법은?",a:["프로토콜 조작","삽입 공격","IP 단편화","난독화"]},ans:2},
+{d:11,en:{q:"A honeypot is best described as:",a:["An encrypted tunnel used to bypass firewalls","A decoy system designed to attract and study attackers","A type of intrusion prevention system","A tool for scanning open ports"]},ko:{q:"허니팟을 가장 잘 설명한 것은?",a:["방화벽을 우회하는 데 사용되는 암호화된 터널","공격자를 유인하고 연구하기 위해 설계된 미끼 시스템","침입 방지 시스템의 한 종류","열린 포트를 스캔하는 도구"]},ans:1},
+{d:12,en:{q:"Which attack exploits misconfigurations in web servers to retrieve files outside the intended web root directory?",a:["SQL Injection","Directory Traversal","CSRF","Clickjacking"]},ko:{q:"웹 서버의 잘못된 설정을 악용해 의도한 웹 루트 디렉터리 밖의 파일을 가져오는 공격은?",a:["SQL 인젝션","디렉터리 트래버설","CSRF","클릭재킹"]},ans:1},
+{d:12,en:{q:"Banner grabbing is used in the reconnaissance phase to:",a:["Intercept HTTP cookies","Identify the web server software and version","Inject malicious scripts","Bypass authentication"]},ko:{q:"정찰 단계에서 배너 그래빙(banner grabbing)을 사용하는 목적은?",a:["HTTP 쿠키를 가로채기 위해","웹 서버 소프트웨어 및 버전을 식별하기 위해","악성 스크립트를 삽입하기 위해","인증을 우회하기 위해"]},ans:1},
+{d:13,en:{q:"Which OWASP vulnerability allows an attacker to inject malicious SQL code via user input fields to manipulate a backend database?",a:["Broken Authentication","SQL Injection","Insecure Deserialization","Security Misconfiguration"]},ko:{q:"사용자 입력 필드를 통해 악성 SQL 코드를 주입해 백엔드 데이터베이스를 조작하는 OWASP 취약점은?",a:["취약한 인증","SQL 인젝션","안전하지 않은 역직렬화","보안 설정 오류"]},ans:1},
+{d:13,en:{q:"A Cross-Site Scripting (XSS) attack primarily targets:",a:["The web server's operating system","The end-user's browser by injecting malicious scripts","The database behind the web application","The network firewall"]},ko:{q:"크로스사이트 스크립팅(XSS) 공격이 주로 표적으로 삼는 것은?",a:["웹 서버의 운영체제","악성 스크립트를 주입해 최종 사용자의 브라우저","웹 애플리케이션 뒤의 데이터베이스","네트워크 방화벽"]},ans:1},
+{d:14,en:{q:"Which SQL injection technique retrieves data by asking a series of true/false questions?",a:["Error-based SQLi","Union-based SQLi","Blind SQLi (Boolean-based)","Time-based SQLi"]},ko:{q:"일련의 참/거짓 질문을 통해 데이터를 조회하는 SQL 인젝션 기법은?",a:["오류 기반 SQLi","UNION 기반 SQLi","블라인드 SQLi(불리언 기반)","시간 기반 SQLi"]},ans:2},
+{d:14,en:{q:"Which countermeasure is MOST effective against SQL injection?",a:["Encrypting database passwords","Using parameterized queries / prepared statements","Installing a firewall","Enabling HTTPS on the web server"]},ko:{q:"SQL 인젝션에 가장 효과적인 대응책은?",a:["데이터베이스 패스워드 암호화","매개변수화된 쿼리/준비된 구문 사용","방화벽 설치","웹 서버에 HTTPS 활성화"]},ans:1},
+{d:15,en:{q:"Which wireless encryption protocol is considered the WEAKEST and most easily cracked?",a:["WPA3","WPA2","WPA","WEP"]},ko:{q:"가장 취약하고 쉽게 해독되는 무선 암호화 프로토콜은?",a:["WPA3","WPA2","WPA","WEP"]},ans:3},
+{d:15,en:{q:"An attacker sets up a rogue Wi-Fi access point with the same SSID as a legitimate network. This is known as:",a:["Wardriving","Evil Twin attack","WPS attack","Deauthentication attack"]},ko:{q:"공격자가 정상적인 네트워크와 동일한 SSID를 가진 악성 Wi-Fi 액세스 포인트를 설치하는 것은?",a:["워드라이빙","이블 트윈 공격","WPS 공격","인증 해제 공격"]},ans:1},
+{d:16,en:{q:"Which mobile attack involves sending malicious code via SMS messages to exploit vulnerabilities in the phone's messaging app?",a:["Vishing","Smishing","Bluejacking","IMSI Catching"]},ko:{q:"SMS 메시지를 통해 악성 코드를 보내 폰의 메시징 앱 취약점을 악용하는 모바일 공격은?",a:["비싱","스미싱","블루재킹","IMSI 캐칭"]},ans:1},
+{d:16,en:{q:"Jailbreaking an iOS device primarily achieves which of the following?",a:["Encrypts the device storage","Removes Apple's sandbox restrictions to install unauthorized apps","Enables remote wipe capability","Improves battery performance"]},ko:{q:"iOS 기기를 탈옥(jailbreaking)하면 주로 어떤 효과가 있는가?",a:["기기 저장소를 암호화한다","애플의 샌드박스 제한을 제거해 비공인 앱 설치가 가능하다","원격 초기화 기능을 활성화한다","배터리 성능을 향상시킨다"]},ans:1},
+{d:17,en:{q:"Which of the following is the MOST common security weakness found in IoT devices?",a:["Too many encryption layers","Default or hardcoded credentials","Overuse of two-factor authentication","Excessive firewall rules"]},ko:{q:"IoT 기기에서 가장 흔히 발견되는 보안 취약점은?",a:["너무 많은 암호화 계층","기본값 또는 하드코딩된 자격 증명","2단계 인증 과다 사용","과도한 방화벽 규칙"]},ans:1},
+{d:17,en:{q:"In Industrial Control Systems (ICS/SCADA), what is the primary concern when applying security patches?",a:["Patch files are too large for OT networks","Patches may disrupt critical operational processes","ICS systems already have automatic updates enabled","Security patches are only available for IT systems"]},ko:{q:"산업 제어 시스템(ICS/SCADA)에 보안 패치를 적용할 때 주요 우려 사항은?",a:["패치 파일이 OT 네트워크에 비해 너무 크다","패치가 중요한 운영 프로세스를 중단시킬 수 있다","ICS 시스템에는 이미 자동 업데이트가 활성화되어 있다","보안 패치는 IT 시스템에만 적용된다"]},ans:1},
+{d:18,en:{q:"Which cloud deployment model provides resources exclusively to a single organization?",a:["Public Cloud","Community Cloud","Private Cloud","Hybrid Cloud"]},ko:{q:"단일 조직에게만 독점적으로 리소스를 제공하는 클라우드 배포 모델은?",a:["퍼블릭 클라우드","커뮤니티 클라우드","프라이빗 클라우드","하이브리드 클라우드"]},ans:2},
+{d:18,en:{q:"Which cloud attack involves an attacker gaining access to a virtual machine that shares the same physical hardware as a target VM?",a:["Wrapping attack","Side-channel attack","Man-in-the-cloud attack","Cloud hopping"]},ko:{q:"공격자가 대상 VM과 동일한 물리적 하드웨어를 공유하는 가상 머신에 접근 권한을 얻는 클라우드 공격은?",a:["래핑 공격","사이드채널 공격","클라우드 중간자 공격","클라우드 호핑"]},ans:1},
+{d:19,en:{q:"Which cryptographic concept ensures that a sender cannot deny having sent a message?",a:["Confidentiality","Integrity","Non-repudiation","Availability"]},ko:{q:"발신자가 메시지를 보냈다는 사실을 부인할 수 없도록 보장하는 암호학적 개념은?",a:["기밀성","무결성","부인 방지","가용성"]},ans:2},
+{d:19,en:{q:"AES (Advanced Encryption Standard) is an example of which type of cryptography?",a:["Asymmetric encryption","Hashing algorithm","Symmetric encryption","Public key infrastructure"]},ko:{q:"AES(고급 암호화 표준)는 어떤 유형의 암호화의 예인가?",a:["비대칭 암호화","해싱 알고리즘","대칭 암호화","공개 키 인프라"]},ans:2},
+{d:2,en:{q:"What does the acronym 'OS fingerprinting' refer to in the context of network scanning?",a:["Recording physical fingerprints of system administrators","Identifying the operating system of a remote host","Generating unique identifiers for network packets","Encrypting scan results"]},ko:{q:"네트워크 스캐닝 맥락에서 'OS 핑거프린팅'이란?",a:["시스템 관리자의 지문을 기록한다","원격 호스트의 운영체제를 식별한다","네트워크 패킷의 고유 식별자를 생성한다","스캔 결과를 암호화한다"]},ans:1},
+{d:5,en:{q:"A 'privilege escalation' attack aims to:",a:["Reduce system performance to force a denial of service","Gain higher-level permissions than originally granted","Encrypt all files on the target system","Steal network packets from the local segment"]},ko:{q:"'권한 상승' 공격의 목적은?",a:["시스템 성능을 저하시켜 서비스 거부를 유도한다","원래 부여된 것보다 높은 권한을 획득한다","대상 시스템의 모든 파일을 암호화한다","로컬 세그먼트에서 네트워크 패킷을 탈취한다"]},ans:1},
+{d:8,en:{q:"Which concept refers to creating a fabricated scenario to extract information from a target?",a:["Phishing","Pretexting","Tailgating","Shoulder surfing"]},ko:{q:"대상으로부터 정보를 빼내기 위해 꾸며낸 시나리오를 만드는 개념은?",a:["피싱","프리텍스팅","테일게이팅","어깨너머 훔쳐보기"]},ans:1},
+{d:13,en:{q:"Cross-Site Request Forgery (CSRF) attacks exploit the trust that:",a:["A browser has in a server certificate","A web application has in an authenticated user's browser","A DNS server has in IP addresses","An IDS has in packet signatures"]},ko:{q:"크로스사이트 요청 위조(CSRF) 공격이 악용하는 신뢰 관계는?",a:["브라우저가 서버 인증서에 갖는 신뢰","웹 애플리케이션이 인증된 사용자의 브라우저에 갖는 신뢰","DNS 서버가 IP 주소에 갖는 신뢰","IDS가 패킷 서명에 갖는 신뢰"]},ans:1},
+{d:19,en:{q:"Which hashing algorithm produces a 256-bit digest and is widely used in digital certificates?",a:["MD5","SHA-1","SHA-256","RC4"]},ko:{q:"256비트 다이제스트를 생성하며 디지털 인증서에 널리 사용되는 해싱 알고리즘은?",a:["MD5","SHA-1","SHA-256","RC4"]},ans:2},
+{d:18,en:{q:"In the shared responsibility model of cloud security, who is ALWAYS responsible for the physical security of the data center infrastructure?",a:["The end user","The cloud service provider (CSP)","A third-party auditor","The customer's IT department"]},ko:{q:"클라우드 보안의 공동 책임 모델에서 데이터 센터 인프라의 물리적 보안에 항상 책임이 있는 주체는?",a:["최종 사용자","클라우드 서비스 제공자(CSP)","제3자 감사자","고객의 IT 부서"]},ans:1},
+{d:6,en:{q:"Which type of malware specifically encrypts a victim's files and demands payment for the decryption key?",a:["Spyware","Adware","Ransomware","Rootkit"]},ko:{q:"피해자의 파일을 암호화하고 복호화 키를 대가로 금전을 요구하는 악성코드 유형은?",a:["스파이웨어","애드웨어","랜섬웨어","루트킷"]},ans:2},
+{d:4,en:{q:"What is the main purpose of conducting a penetration test as opposed to a vulnerability scan?",a:["To automatically patch identified vulnerabilities","To actively exploit vulnerabilities to assess real-world impact","To generate a list of open ports","To monitor real-time network traffic"]},ko:{q:"취약점 스캔과 달리 침투 테스트를 수행하는 주된 목적은?",a:["식별된 취약점을 자동으로 패치한다","취약점을 적극적으로 악용해 실제 영향을 평가한다","열린 포트 목록을 생성한다","실시간 네트워크 트래픽을 모니터링한다"]},ans:1},
+{d:1,en:{q:"Which DNS record type maps a domain name to an IPv4 address?",a:["MX record","CNAME record","A record","PTR record"]},ko:{q:"도메인 이름을 IPv4 주소로 매핑하는 DNS 레코드 유형은?",a:["MX 레코드","CNAME 레코드","A 레코드","PTR 레코드"]},ans:2},
+{d:15,en:{q:"WPA2 uses which encryption algorithm as its default cipher?",a:["RC4","DES","AES-CCMP","Blowfish"]},ko:{q:"WPA2의 기본 암호화 알고리즘으로 사용되는 것은?",a:["RC4","DES","AES-CCMP","블로피시"]},ans:2},
+{d:11,en:{q:"What is the primary difference between a stateful firewall and a stateless (packet-filtering) firewall?",a:["Stateful firewalls are slower and less secure","Stateful firewalls track the state of network connections","Stateless firewalls perform deep packet inspection","Stateful firewalls only work with IPv6"]},ko:{q:"상태 기반 방화벽과 비상태 기반(패킷 필터링) 방화벽의 주된 차이점은?",a:["상태 기반 방화벽은 느리고 덜 안전하다","상태 기반 방화벽은 네트워크 연결 상태를 추적한다","비상태 기반 방화벽은 심층 패킷 검사를 수행한다","상태 기반 방화벽은 IPv6에서만 작동한다"]},ans:1},
+{d:0,en:{q:"The CIA Triad represents which three core principles of information security?",a:["Control, Integrity, Authentication","Confidentiality, Integrity, Availability","Cryptography, Identity, Authorization","Compliance, Infrastructure, Access"]},ko:{q:"CIA 트라이어드는 정보 보안의 세 가지 핵심 원칙을 나타내는데, 이는?",a:["통제, 무결성, 인증","기밀성, 무결성, 가용성","암호화, 신원, 인가","규정 준수, 인프라, 접근"]},ans:1},
+{d:16,en:{q:"Which Android security feature sandboxes each application in its own user ID space?",a:["SELinux","Application sandboxing via unique UIDs","Google Play Protect","Android Keystore"]},ko:{q:"각 앱을 자체 사용자 ID 공간에서 샌드박스로 처리하는 Android 보안 기능은?",a:["SELinux","고유 UID를 통한 앱 샌드박싱","Google Play 프로텍트","Android 키스토어"]},ans:1},
+{d:10,en:{q:"Which HTTP cookie attribute helps prevent JavaScript from accessing session cookies, mitigating XSS-based session theft?",a:["Secure","SameSite","HttpOnly","Domain"]},ko:{q:"JavaScript가 세션 쿠키에 접근하지 못하게 해 XSS 기반 세션 탈취를 완화하는 HTTP 쿠키 속성은?",a:["Secure","SameSite","HttpOnly","Domain"]},ans:2}
+];
+
+// ===== QUIZ STATE =====
+let currentQ = 0;
+let answers = new Array(questions.length).fill(-1);
+let radarChart = null;
+
+function startQuiz() {
+  document.getElementById('screen-instructions').classList.add('hidden');
+  document.getElementById('screen-quiz').classList.remove('hidden');
+  currentQ = 0;
+  answers.fill(-1);
+  renderQuestion();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  const ql = q[lang];
+  const d = domains[q.d];
+  document.getElementById('q-domain').textContent = (lang==='en'?'Domain: ':'도메인: ') + d[lang];
+  document.getElementById('q-text').textContent = (lang==='en'?'Q'+(currentQ+1)+'. ':'문제 '+(currentQ+1)+'. ') + ql.q;
+  const letters = ['A','B','C','D'];
+  document.getElementById('q-options').innerHTML = ql.a.map((a,i) =>
+    '<button class="option-btn'+(answers[currentQ]===i?' selected':'')+'" onclick="selectAnswer('+i+')"><span class="opt-letter">'+letters[i]+'</span><span>'+a+'</span></button>'
+  ).join('');
+  const pct = Math.round(((currentQ)/questions.length)*100);
+  document.getElementById('q-counter').textContent = (lang==='en'?'Question ':'문항 ')+(currentQ+1)+' / '+questions.length;
+  document.getElementById('q-pct').textContent = pct+'%';
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('btn-prev').disabled = currentQ===0;
+  const isLast = currentQ===questions.length-1;
+  document.getElementById('btn-next').textContent = isLast?(lang==='en'?'SUBMIT':'제출'):(lang==='en'?'NEXT':'다음');
+}
+
+function selectAnswer(i) {
+  answers[currentQ] = i;
+  renderQuestion();
+}
+
+function prevQ() {
+  if (currentQ>0) { currentQ--; renderQuestion(); window.scrollTo({top:0,behavior:'smooth'}); }
+}
+
+function nextQ() {
+  if (answers[currentQ]===-1) return;
+  if (currentQ<questions.length-1) {
+    currentQ++;
+    renderQuestion();
+    window.scrollTo({top:0,behavior:'smooth'});
+  } else {
+    document.getElementById('screen-quiz').classList.add('hidden');
+    document.getElementById('screen-results').classList.remove('hidden');
+    showResults();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+}
+
+function showResults() {
+  // Calculate scores
+  let total = 0;
+  const domainScores = {};
+  const domainTotals = {};
+  domains.forEach(d => { domainScores[d.id]=0; domainTotals[d.id]=0; });
+  questions.forEach((q,i) => {
+    domainTotals[q.d]++;
+    if (answers[i]===q.ans) { total++; domainScores[q.d]++; }
+  });
+
+  const pct = Math.round((total/questions.length)*100);
+  document.getElementById('r-score').textContent = total;
+  document.getElementById('r-pct').textContent = pct+'%';
+
+  // Readiness level
+  let level, action;
+  if (total>=45) {
+    level = lang==='en'?'Advanced':'심화 수준';
+    action = lang==='en'?'May skip foundational modules; focus on hands-on labs and advanced topics.':'기초 모듈 건너뛰고 실습 랩과 심화 주제에 집중 가능.';
+  } else if (total>=38) {
+    level = lang==='en'?'Proficient':'숙련 수준';
+    action = lang==='en'?'Light review of weak domains identified; ready for the course.':'취약 도메인 가벼운 복습 후 바로 수강 가능.';
+  } else if (total>=28) {
+    level = lang==='en'?'Developing':'발전 중 수준';
+    action = lang==='en'?'Review core networking, OS, and security fundamentals before starting.':'핵심 네트워킹·OS·보안 기초 복습 후 수강 권장.';
+  } else if (total>=15) {
+    level = lang==='en'?'Beginner':'입문 수준';
+    action = lang==='en'?'Complete prerequisite reading (CompTIA Security+/Network+ level) first.':'CompTIA Security+/Network+ 수준의 선행 학습 완료 후 수강.';
+  } else {
+    level = lang==='en'?'Foundational':'기초 수준';
+    action = lang==='en'?'Strongly recommended to take introductory IT/security courses before CEH.':'CEH 수강 전 IT/보안 입문 과정을 먼저 수강할 것을 강력 권장.';
+  }
+  document.getElementById('r-level').textContent = level;
+  document.getElementById('r-action').textContent = action;
+
+  // Strengths & Weaknesses
+  const strengths = [], weaknesses = [];
+  domains.forEach(d => {
+    const s = domainScores[d.id], t = domainTotals[d.id];
+    const p = t>0 ? s/t : 0;
+    if (p>=0.75) strengths.push(d);
+    if (p<0.5) weaknesses.push(d);
+  });
+  document.getElementById('r-strengths').innerHTML = strengths.length>0 ?
+    strengths.map(d=>'<li>'+d[lang]+'</li>').join('') :
+    '<li>'+(lang==='en'?'No strong domains identified':'강점 도메인 없음')+'</li>';
+  document.getElementById('r-weaknesses').innerHTML = weaknesses.length>0 ?
+    weaknesses.map(d=>'<li>'+d[lang]+'</li>').join('') :
+    '<li>'+(lang==='en'?'No weak domains identified':'약점 도메인 없음')+'</li>';
+
+  // Domain breakdown
+  let domHtml = '';
+  domains.forEach(d => {
+    const s = domainScores[d.id], t = domainTotals[d.id];
+    const p = t>0 ? Math.round((s/t)*100) : 0;
+    let cls = '';
+    if (p>=75) cls = 'strong';
+    else if (p<50) cls = 'weak';
+    domHtml += '<div class="domain-row '+cls+'"><span class="d-name">'+d[lang]+'</span><span class="d-score">'+s+'/'+t+' ('+p+'%)</span></div>';
+  });
+  document.getElementById('r-domains').innerHTML = domHtml;
+
+  // Radar chart
+  const labels = domains.map(d => {
+    const name = d[lang];
+    return name.length > 18 ? name.substring(0,16)+'...' : name;
+  });
+  const data = domains.map(d => {
+    const t = domainTotals[d.id];
+    return t>0 ? Math.round((domainScores[d.id]/t)*100) : 0;
+  });
+
+  if (radarChart) radarChart.destroy();
+  const ctx = document.getElementById('radar-chart').getContext('2d');
+  radarChart = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: lang==='en'?'Score %':'점수 %',
+        data: data,
+        backgroundColor: 'rgba(42,255,210,0.15)',
+        borderColor: '#2AFFD2',
+        borderWidth: 2,
+        pointBackgroundColor: '#2AFFD2',
+        pointBorderColor: '#2AFFD2',
+        pointRadius: 3
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        r: {
+          beginAtZero: true,
+          max: 100,
+          ticks: { stepSize: 25, color: '#4A6080', font: { size: 9 }, backdropColor: 'transparent' },
+          grid: { color: 'rgba(26,45,80,0.6)' },
+          angleLines: { color: 'rgba(26,45,80,0.6)' },
+          pointLabels: { color: '#8FA8CC', font: { size: 9, family: 'DM Mono' } }
+        }
+      },
+      plugins: {
+        legend: { display: false }
+      }
+    }
+  });
+}
+
+function resetQuiz() {
+  document.getElementById('screen-results').classList.add('hidden');
+  document.getElementById('screen-instructions').classList.remove('hidden');
+  currentQ = 0;
+  answers.fill(-1);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
