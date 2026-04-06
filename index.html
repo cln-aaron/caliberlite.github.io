@@ -473,12 +473,11 @@ function setLang(l) {
 function checkAccess() {
   const input = document.getElementById('access-input').value.trim().toUpperCase();
   const err = document.getElementById('access-error');
-  const codes = ['INTEGRITYMATTERS','CALIBERLITE2026'];
   const now = Date.now();
-  const timedCode = 'CEHREADY2026';
-  const timedStart = new Date('2026-04-01T00:00:00+08:00').getTime();
-  const timedEnd = new Date('2026-12-31T23:59:59+08:00').getTime();
-  if (codes.includes(input) || (input === timedCode && now >= timedStart && now <= timedEnd)) {
+  const timedCode = 'SGKR2026';
+  const timedStart = new Date('2026-04-06T00:00:00+08:00').getTime();
+  const timedEnd = new Date('2026-04-11T23:59:59+08:00').getTime();
+  if (input === timedCode && now >= timedStart && now <= timedEnd) {
     document.getElementById('screen-access').classList.add('hidden');
     document.getElementById('screen-intro').classList.remove('hidden');
     window.scrollTo({top:0,behavior:'smooth'});
